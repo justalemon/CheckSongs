@@ -80,10 +80,6 @@ def get_song_info(path: Path):
     return info
 
 
-def print_song_duplicate(path: Path, sha256_hash: str):
-    print(f"\tDuplicated file: {path.absolute()} ({sha256_hash})", file=sys.stderr)
-
-
 def main():
     if len(sys.argv) < 2:
         sys.exit("Usage: check_songs.py [path]")
