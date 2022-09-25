@@ -79,6 +79,8 @@ def main():
 
     known_hashes: dict[str, list[Union[Path, SongInformation]]] = {}
 
+    print("Checking songs, please wait...")
+
     for path in Path(sys.argv[1]).iterdir():
         info = get_song_info(path)
 
