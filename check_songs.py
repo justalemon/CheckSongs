@@ -106,8 +106,8 @@ def main():
     if known_duplicates:
         print("\nFound Duplicates:\n", file=sys.stderr)
 
-        for sha256_hash, matches in known_duplicates.items():
-            print(sha256_hash, file=sys.stderr)
+        for sha_hash, matches in known_duplicates.items():
+            print(sha_hash, file=sys.stderr)
 
             for match in matches:
                 print(f"\t{match}", file=sys.stderr)
