@@ -2,18 +2,54 @@ import hashlib
 import json
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 
 class SongInformation:
-    def __init__(self, data: dict):
-        self.name = data.get("_songName", "Unknown Song Name")
-        self.sub_name = data.get("_songSubName", "No Sub Name")
-        self.song_author = data.get("_songAuthorName", "Unknown Song Author")
-        self.level_author = data.get("_levelAuthorName", "Unknown Level Author")
+    def __init__(self, path: Optional[Path]):
+        self.levels: dict[str, Path] = {}
+        self.valid: bool = False
+        self.exception: Optional[Exception] = None
+        self.path: Optional[Path] = path
+
+        info = {}
+        contents = b""
+
+        if path is not None:
+            try:
+                info_path = path / "info.dat"
+
+                with open(info_path, "rb") as file:
+                    contents = file.read()
+
+                info = json.loads(contents.decode("utf-8"))
+
+                for map_set in info["_difficultyBeatmapSets"]:
+                    for difficulty in map_set["_difficultyBeatmaps"]:
+                        filename = difficulty["_beatmapFilename"]
+
+                        with open(path / filename, "rb") as file:
+                            map_data = file.read()
+
+                        map_hash = hashlib.sha1(map_data).hexdigest()
+                        self.levels[map_hash] = filename
+                        contents += map_data
+
+                self.valid = True
+            except Exception as e:
+                self.exception = e
+
+        self.name = info.get("_songName", "Unknown Song Name")
+        self.sub_name = info.get("_songSubName", "No Sub Name")
+        self.song_author = info.get("_songAuthorName", "Unknown Song Author")
+        self.level_author = info.get("_levelAuthorName", "Unknown Level Author")
+        self.hash: str = hashlib.sha1(contents).hexdigest()
+
+    def __str__(self):
+        return f"{self.name} ({self.sub_name}) - {self.song_author} [{self.level_author}] @ {self.path}"
 
 
-EMPTY_INFORMATION = SongInformation({})
+EMPTY_INFORMATION = SongInformation(None)
 SONG_INFO_CACHE: dict[Path, SongInformation] = {}
 
 
@@ -21,22 +57,12 @@ def get_song_info(path: Path):
     info = SONG_INFO_CACHE.get(path, None)
 
     if info is None:
-        error: Optional[Exception] = None
+        info = SongInformation(path)
+        to = sys.stdout if info.exception is None else sys.stderr
 
-        try:
-            with open(path, "r", encoding="utf-8") as file:
-                parsed = json.load(file)
-            info = SongInformation(parsed)
-            to = sys.stdout
-        except Exception as e:
-            info = EMPTY_INFORMATION
-            to = sys.stderr
-            error = e
-
-        print(f"{info.name} ({info.sub_name}) - {info.song_author} [{info.level_author}] @ {path.parent}", file=to)
-
-        if error is not None:
-            print(f"\tInvalid Metadata: {type(error)} - {error}", file=sys.stderr)
+        print(info, file=to)
+        if info.exception is not None:
+            print(f"\tInvalid Metadata: {type(info.exception)} - {info.exception}", file=sys.stderr)
 
         SONG_INFO_CACHE[path] = info
 
@@ -51,23 +77,18 @@ def main():
     if len(sys.argv) < 2:
         sys.exit("Usage: check_songs.py [path]")
 
-    known_hashes: dict[str, list[Path]] = {}
+    known_hashes: dict[str, list[Union[Path, SongInformation]]] = {}
 
-    for path in Path(sys.argv[1]).rglob("*.dat"):
-        info_path = path.with_name("info.dat")
-        get_song_info(info_path)
+    for path in Path(sys.argv[1]).iterdir():
+        info = get_song_info(path)
 
-        with open(path, "rb") as file:
-            contents = file.read()
-            sha256_hash = hashlib.sha256(contents).hexdigest()
+        existing_song = known_hashes.get(info.hash, [])
+        existing_song.append(info)
 
-        existing = known_hashes.get(sha256_hash, [])
-        existing.append(path)
+        if len(existing_song) > 1:  # if there is more than one
+            print(f"\tFound duplicated song: {info}", file=sys.stderr)
 
-        if len(existing) > 1:  # if there is more than one
-            print(f"\tFound duplicated file: {path.name}", file=sys.stderr)
-
-        known_hashes[sha256_hash] = existing
+        known_hashes[info.hash] = existing_song
 
     known_duplicates = {k: v for k, v in known_hashes.items() if len(v) > 1}
 
