@@ -12,7 +12,7 @@ RE_FOLDER_NAME = re.compile("[A-Za-z0-9]{1,6} \(.{1,} - .{1,}\)")
 class SongInformation:
     def __init__(self, path: Optional[Path]):
         self.levels: dict[str, Path] = {}
-        self.valid: bool = False
+        self.has_been_loaded: bool = False
         self.exception: Optional[Exception] = None
         self.path: Optional[Path] = path
 
@@ -39,7 +39,7 @@ class SongInformation:
                         self.levels[map_hash] = filename
                         contents += map_data
 
-                self.valid = True
+                self.has_been_loaded = True
             except Exception as e:
                 self.exception = e
 
@@ -51,6 +51,10 @@ class SongInformation:
 
     def __str__(self):
         return f"{self.name} ({self.sub_name}) - {self.song_author} [{self.level_author}] @ {self.path}"
+
+    @property
+    def is_valid(self):
+        return self.has_been_loaded and self.path is not None and self.is_folder_name_valid
 
     @property
     def is_folder_name_valid(self):
