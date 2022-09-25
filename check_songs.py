@@ -65,12 +65,20 @@ def main():
         existing.append(path)
 
         if len(existing) > 1:  # if there is more than one
-            if len(existing) == 2:  # if we now have 2
-                print_song_duplicate(existing[0], sha256_hash)
-
-            print_song_duplicate(existing[-1], sha256_hash)
+            print(f"\tFound duplicated file: {path.name}", file=sys.stderr)
 
         known_hashes[sha256_hash] = existing
+
+    known_duplicates = {k: v for k, v in known_hashes.items() if len(v) > 1}
+
+    if known_duplicates:
+        print("\nFound Duplicates:\n", file=sys.stderr)
+
+        for sha256_hash, matches in known_duplicates.items():
+            print(sha256_hash, file=sys.stderr)
+
+            for match in matches:
+                print(f"\t{match}", file=sys.stderr)
 
 
 if __name__ == "__main__":
