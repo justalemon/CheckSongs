@@ -1,8 +1,12 @@
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Optional, Union
+
+
+RE_FOLDER_NAME = re.compile("[A-Za-z0-9]{1,6} \(.{1,} - .{1,}\)")
 
 
 class SongInformation:
@@ -48,6 +52,13 @@ class SongInformation:
     def __str__(self):
         return f"{self.name} ({self.sub_name}) - {self.song_author} [{self.level_author}] @ {self.path}"
 
+    @property
+    def is_folder_name_valid(self):
+        if self.path is None:
+            return False
+
+        return RE_FOLDER_NAME.fullmatch(self.path.name)
+
 
 EMPTY_INFORMATION = SongInformation(None)
 SONG_INFO_CACHE: dict[Path, SongInformation] = {}
@@ -89,6 +100,8 @@ def main():
 
         if len(existing_song) > 1:  # if there is more than one
             print(f"\tFound duplicated song: {info}", file=sys.stderr)
+        if info.valid and not info.is_folder_name_valid:
+            print(f"\tFolder name '{info.path.name}' is not valid", file=sys.stderr)
 
         known_hashes[info.hash] = existing_song
 
