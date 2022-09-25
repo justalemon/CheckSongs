@@ -33,7 +33,7 @@ def get_song_info(path: Path):
 
 
 def print_song_duplicate(path: Path, sha256_hash: str):
-    print(f"\tDuplicated file: {path.absolute()} ({sha256_hash})")
+    print(f"\tDuplicated file: {path.absolute()} ({sha256_hash})", file=sys.stderr)
 
 
 def main():
