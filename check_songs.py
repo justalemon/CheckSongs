@@ -61,7 +61,7 @@ class SongInformation:
         if self.path is None:
             return False
 
-        return RE_FOLDER_NAME.fullmatch(self.path.name)
+        return RE_FOLDER_NAME.fullmatch(self.path.name) is not None
 
 
 EMPTY_INFORMATION = SongInformation(None)
