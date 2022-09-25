@@ -16,20 +16,23 @@ EMPTY_INFORMATION = SongInformation({})
 SONG_INFO_CACHE: dict[Path, SongInformation] = {}
 
 
-def print_song_duplicate(path: Path, sha256_hash: str):
-    info_path = path.with_name("info.dat")
-    info = SONG_INFO_CACHE.get(info_path, None)
+def get_song_info(path: Path):
+    info = SONG_INFO_CACHE.get(path, None)
 
     if info is None:
         try:
-            with open(info_path, "r") as file:
+            with open(path, "r") as file:
                 parsed = json.load(file)
             info = SongInformation(parsed)
         except Exception:
             info = EMPTY_INFORMATION
-        SONG_INFO_CACHE[info_path] = info
+        print(f"{info.name} ({info.sub_name}) - {info.song_author} [{info.level_author}]")
+        SONG_INFO_CACHE[path] = info
 
-    print(f"{info.name} ({info.sub_name}) - {info.song_author} [{info.level_author}]")
+    return info
+
+
+def print_song_duplicate(path: Path, sha256_hash: str):
     print(f"\tDuplicated file: {path.absolute()} ({sha256_hash})")
 
 
@@ -40,6 +43,9 @@ def main():
     known_hashes: dict[str, list[Path]] = {}
 
     for path in Path(sys.argv[1]).rglob("*.dat"):
+        info_path = path.with_name("info.dat")
+        get_song_info(info_path)
+
         with open(path, "rb") as file:
             contents = file.read()
             sha256_hash = hashlib.sha256(contents).hexdigest()
