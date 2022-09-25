@@ -82,8 +82,8 @@ def main():
     if len(sys.argv) < 2:
         sys.exit("Usage: check_songs.py [path]")
 
-    known_songs: list[SongInformation] = []
-    known_hashes: dict[str, list[Union[Path, SongInformation]]] = {}
+    songs: list[SongInformation] = []
+    hashes: dict[str, list[Union[Path, SongInformation]]] = {}
 
     print("Checking songs, please wait...")
 
@@ -95,19 +95,22 @@ def main():
         if info.exception is not None:
             print(f"\tInvalid Metadata: {type(info.exception)} - {info.exception}", file=sys.stderr)
 
-        existing_song = known_hashes.get(info.hash, [])
+        existing_song = hashes.get(info.hash, [])
         existing_song.append(info)
-        known_songs.append(info)
+        songs.append(info)
 
         if len(existing_song) > 1:  # if there is more than one
             print(f"\tFound duplicated song: {info}", file=sys.stderr)
         if info.path is not None and not info.is_folder_name_valid:
             print(f"\tFolder name '{info.path.name}' is not valid", file=sys.stderr)
 
-        known_hashes[info.hash] = existing_song
+        hashes[info.hash] = existing_song
 
-    known_duplicates = {k: v for k, v in known_hashes.items() if len(v) > 1}
-    known_invalid_names = [x for x in known_songs if not x.is_folder_name_valid]
+    def check(x: str):
+        return hashes[x][0].name
+
+    known_duplicates = {x: hashes[x] for x in sorted(hashes.keys(), key=check) if len(hashes[x]) > 1}
+    known_invalid_names = [x for x in songs if not x.is_folder_name_valid]
 
     with open("what_we_found.txt", "w", encoding="utf-8") as file:
         print("\nDuplicates Found:\n", file=sys.stdout)
