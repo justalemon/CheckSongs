@@ -24,7 +24,7 @@ def get_song_info(path: Path):
         error: Optional[Exception] = None
 
         try:
-            with open(path, "r") as file:
+            with open(path, "r", encoding="utf-8") as file:
                 parsed = json.load(file)
             info = SongInformation(parsed)
             to = sys.stdout
