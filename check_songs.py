@@ -24,9 +24,11 @@ def get_song_info(path: Path):
             with open(path, "r") as file:
                 parsed = json.load(file)
             info = SongInformation(parsed)
+            to = sys.stdout
         except Exception:
             info = EMPTY_INFORMATION
-        print(f"{info.name} ({info.sub_name}) - {info.song_author} [{info.level_author}]")
+            to = sys.stderr
+        print(f"{info.name} ({info.sub_name}) - {info.song_author} [{info.level_author}] @ {path.parent}", file=to)
         SONG_INFO_CACHE[path] = info
 
     return info
