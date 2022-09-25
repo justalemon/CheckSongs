@@ -2,6 +2,7 @@ import hashlib
 import json
 import sys
 from pathlib import Path
+from typing import Optional
 
 
 class SongInformation:
@@ -20,15 +21,23 @@ def get_song_info(path: Path):
     info = SONG_INFO_CACHE.get(path, None)
 
     if info is None:
+        error: Optional[Exception] = None
+
         try:
             with open(path, "r") as file:
                 parsed = json.load(file)
             info = SongInformation(parsed)
             to = sys.stdout
-        except Exception:
+        except Exception as e:
             info = EMPTY_INFORMATION
             to = sys.stderr
+            error = e
+
         print(f"{info.name} ({info.sub_name}) - {info.song_author} [{info.level_author}] @ {path.parent}", file=to)
+
+        if error is not None:
+            print(f"\tInvalid Metadata: {type(error)} - {error}", file=sys.stderr)
+
         SONG_INFO_CACHE[path] = info
 
     return info
