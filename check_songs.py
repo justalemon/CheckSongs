@@ -73,12 +73,6 @@ def get_song_info(path: Path):
 
     if info is None:
         info = SongInformation(path)
-        to = sys.stdout if info.exception is None else sys.stderr
-
-        print(info, file=to)
-        if info.exception is not None:
-            print(f"\tInvalid Metadata: {type(info.exception)} - {info.exception}", file=sys.stderr)
-
         SONG_INFO_CACHE[path] = info
 
     return info
@@ -94,13 +88,18 @@ def main():
 
     for path in Path(sys.argv[1]).iterdir():
         info = get_song_info(path)
+        to = sys.stdout if info.is_valid else sys.stderr
+
+        print(info, file=to)
+        if info.exception is not None:
+            print(f"\tInvalid Metadata: {type(info.exception)} - {info.exception}", file=sys.stderr)
 
         existing_song = known_hashes.get(info.hash, [])
         existing_song.append(info)
 
         if len(existing_song) > 1:  # if there is more than one
             print(f"\tFound duplicated song: {info}", file=sys.stderr)
-        if info.valid and not info.is_folder_name_valid:
+        if info.path is not None and not info.is_folder_name_valid:
             print(f"\tFolder name '{info.path.name}' is not valid", file=sys.stderr)
 
         known_hashes[info.hash] = existing_song
