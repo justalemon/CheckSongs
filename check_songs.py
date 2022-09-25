@@ -82,6 +82,7 @@ def main():
     if len(sys.argv) < 2:
         sys.exit("Usage: check_songs.py [path]")
 
+    known_songs: list[SongInformation] = []
     known_hashes: dict[str, list[Union[Path, SongInformation]]] = {}
 
     print("Checking songs, please wait...")
@@ -96,6 +97,7 @@ def main():
 
         existing_song = known_hashes.get(info.hash, [])
         existing_song.append(info)
+        known_songs.append(info)
 
         if len(existing_song) > 1:  # if there is more than one
             print(f"\tFound duplicated song: {info}", file=sys.stderr)
@@ -105,15 +107,26 @@ def main():
         known_hashes[info.hash] = existing_song
 
     known_duplicates = {k: v for k, v in known_hashes.items() if len(v) > 1}
+    known_invalid_names = [x for x in known_songs if not x.is_folder_name_valid]
 
-    if known_duplicates:
-        print("\nFound Duplicates:\n", file=sys.stderr)
+    with open("what_we_found.txt", "w", encoding="utf-8") as file:
+        print("\nDuplicates Found:\n", file=sys.stdout)
+        print("Duplicates Found:\n", file=file)
 
         for sha_hash, matches in known_duplicates.items():
             print(sha_hash, file=sys.stderr)
+            print(sha_hash, file=file)
 
             for match in matches:
                 print(f"\t{match}", file=sys.stderr)
+                print(f"\t{match}", file=file)
+
+        print("\nInvalid Names found:\n", file=sys.stdout)
+        print("\nInvalid Names found:\n", file=file)
+
+        for song in known_invalid_names:
+            print(f"\t{song.path.name} ({song.hash})", file=sys.stderr)
+            print(f"\t{song.path.name} ({song.hash})", file=file)
 
 
 if __name__ == "__main__":
