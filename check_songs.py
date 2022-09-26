@@ -80,14 +80,23 @@ def get_song_info(path: Path):
 
 def main():
     if len(sys.argv) < 2:
-        sys.exit("Usage: check_songs.py [path]")
+        songs_folder = Path(".") / "Beat Saber_Data" / "CustomLevels"
+
+        if not songs_folder.exists():
+            print("Current folder is not a Beat Saber folder!\n"
+                  "You can move this file to the Beat Saber install directory or explicitly specify it "
+                  "in the command line.")
+            input()
+            sys.exit(1)
+    else:
+        songs_folder = Path(sys.argv[1])
 
     songs: list[SongInformation] = []
     hashes: dict[str, list[Union[Path, SongInformation]]] = {}
 
     print("Checking songs, please wait...")
 
-    for path in Path(sys.argv[1]).iterdir():
+    for path in songs_folder.iterdir():
         info = get_song_info(path)
         to = sys.stdout if info.is_valid else sys.stderr
 
