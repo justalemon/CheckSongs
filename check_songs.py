@@ -140,6 +140,9 @@ def main():
             print(f"\t{song.path.name} ({song.hash})", file=sys.stderr)
             print(f"\t{song.path.name} ({song.hash})", file=file)
 
+    input()
+    sys.exit(0)
+
 
 if __name__ == "__main__":
     main()
