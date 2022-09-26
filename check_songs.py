@@ -140,7 +140,7 @@ def main():
             print(f"\t{song.path.name} ({song.hash})", file=sys.stderr)
             print(f"\t{song.path.name} ({song.hash})", file=file)
 
-    input()
+    input("Press a key to exit")
     sys.exit(0)
 
 
