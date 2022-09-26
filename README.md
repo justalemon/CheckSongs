@@ -6,7 +6,7 @@ Special thanks to this kind people from the Beat Saber Modding Group Discord:
 
 * Kinsi, Shadnix and Fern for helping me with the SHA1 hashing of the levels
 * Top_Cat, Kinsi and Shadnix for help with the [beatsaver.com API](https://api.beatsaver.com/docs)
-* Top_Cat for showing me where how the song folder names are formatted
+* Top_Cat for showing me where and how are the song folder names are formatted
 
 ## Download
 
