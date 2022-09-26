@@ -2,6 +2,12 @@
 
 This is a simple script that will check your Beat Saber songs and try to identify duplicated songs and songs where the folder name does not matches the common format of `[ID] ([Song Name] - [Level Author])`.
 
+Special thanks to this kind people from the Beat Saber Modding Group Discord:
+
+* Kinsi, Shadnix and Fern for helping me with the SHA1 hashing of the levels
+* Top_Cat, Kinsi and Shadnix for help with the [beatsaver.com API](https://api.beatsaver.com/docs)
+* Top_Cat for showing me where how the song folder names are formatted
+
 ## Download
 
 * [GitHub Actions](https://nightly.link/justalemon/CheckSongs/workflows/main/master/CheckSongs.zip)
