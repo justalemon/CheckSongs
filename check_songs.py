@@ -7,6 +7,7 @@ from typing import Optional, Union
 
 
 RE_FOLDER_NAME = re.compile("[A-Za-z0-9]{1,6} \(.{1,} - .{1,}\)")
+OUTPUT_FILE = "what_we_found.txt"
 
 
 class SongInformation:
@@ -121,7 +122,7 @@ def main():
     known_duplicates = {x: hashes[x] for x in sorted(hashes.keys(), key=check) if len(hashes[x]) > 1}
     known_invalid_names = [x for x in songs if not x.is_folder_name_valid]
 
-    with open("what_we_found.txt", "w", encoding="utf-8") as file:
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as file:
         print("\nDuplicates Found:\n", file=sys.stdout)
         print("Duplicates Found:\n", file=file)
 
@@ -140,7 +141,7 @@ def main():
             print(f"\t{song.path.name} ({song.hash})", file=sys.stderr)
             print(f"\t{song.path.name} ({song.hash})", file=file)
 
-    input("Press a key to exit")
+    input(f"\nThe results have been saved to {OUTPUT_FILE}\nPress a key to exit")
     sys.exit(0)
 
 
