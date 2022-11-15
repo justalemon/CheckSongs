@@ -1,4 +1,4 @@
-# Song Checker for Beat Saber<br>[![GitHub Actions][actions-img]][actions-url]
+# Song Checker for Beat Saber<br>[![GitHub Actions][actions-img]][actions-url] [![Patreon][patreon-img]][patreon-url] [![PayPal][paypal-img]][paypal-url] [![Discord][discord-img]][discord-url]
 
 This is a simple script that will check your Beat Saber songs and try to identify duplicated songs and songs where the folder name does not matches the common format of `[ID] ([Song Name] - [Level Author])`.
 
@@ -24,3 +24,9 @@ After it finishes, you will see a list of songs that are duplicated and another 
 
 [actions-img]: https://img.shields.io/github/workflow/status/justalemon/CheckSongs/Compile%20Script?label=github%20actions
 [actions-url]: https://github.com/justalemon/CheckSongs/actions
+[patreon-img]: https://img.shields.io/badge/support-patreon-FF424D.svg
+[patreon-url]: https://www.patreon.com/lemonchan
+[paypal-img]: https://img.shields.io/badge/support-paypal-0079C1.svg
+[paypal-url]: https://paypal.me/justalemon
+[discord-img]: https://img.shields.io/badge/discord-join-7289DA.svg
+[discord-url]: https://discord.gg/Cf6sspj
