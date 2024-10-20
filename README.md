@@ -22,7 +22,7 @@ Double click `CheckSongs.exe` and it will start comparing your songs. It's that 
 
 After it finishes, you will see a list of songs that are duplicated and another list of songs that has the wrong folder format. The lists will also be saved to a file called `what_we_found.txt`. 
 
-[actions-img]: https://img.shields.io/github/workflow/status/justalemon/CheckSongs/Compile%20Script?label=github%20actions
+[actions-img]: https://img.shields.io/github/actions/workflow/status/justalemon/CheckSongs/main.yml?branch=master&label=actions
 [actions-url]: https://github.com/justalemon/CheckSongs/actions
 [patreon-img]: https://img.shields.io/badge/support-patreon-FF424D.svg
 [patreon-url]: https://www.patreon.com/lemonchan
