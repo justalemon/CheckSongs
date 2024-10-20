@@ -7,17 +7,13 @@ jobs:
   lint-and-compile:
     runs-on: windows-2022
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5.2.0
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5.2.0
         with:
           python-version: "3.12"
           cache: pip
-      - name: Install Requirements
-        run: pip install -r requirements.txt
-      - name: Build Executable
-        run: pyinstaller --onefile --distpath dist --workpath build --clean --icon NONE --name CheckSongs check_songs.py
+      - run: pip install -r requirements.txt
+      - run: pyinstaller --onefile --distpath dist --workpath build --clean --icon NONE --name CheckSongs check_songs.py
       - uses: actions/upload-artifact@v4.4.3
         with:
           name: CheckSongs
