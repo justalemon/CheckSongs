@@ -7,7 +7,7 @@ jobs:
   lint-and-compile:
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v4.2.1
+      - uses: actions/checkout@v4.2.2
       - uses: actions/setup-python@v5.2.0
         with:
           python-version: "3.12"
